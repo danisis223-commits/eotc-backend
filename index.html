@@ -18,7 +18,7 @@
         .lang-select { background: var(--gold); border: none; padding: 8px 16px; border-radius: 30px; color: #fff; font-weight: bold; font-size: 0.85rem; cursor: pointer; min-width: 130px; }
         .lang-select option { background: #fff; color: #333; }
         .user-nav { margin-top: 10px; text-align: right; font-size: 0.9rem; }
-        .user-nav a { color: var(--primary); text-decoration: none; margin-left: 12px; background: #ede7df; padding: 5px 15px; border-radius: 20px; }
+        .user-nav a, .user-nav span { color: var(--primary); text-decoration: none; margin-left: 12px; background: #ede7df; padding: 5px 15px; border-radius: 20px; display: inline-block; }
         .user-nav a:hover { background: var(--gold); color: #fff; }
         .search-box { display: flex; background: #fff; border-radius: 40px; padding: 4px 4px 4px 18px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); margin: 16px 0; }
         .search-box input { flex: 1; border: none; outline: none; font-size: 1rem; padding: 10px 0; background: transparent; }
@@ -35,6 +35,8 @@
         .hero h1 { font-size: 1.8rem; color: var(--primary); letter-spacing: 1px; }
         .hero h1 span { color: var(--gold); }
         .hero p { font-size: 0.9rem; opacity: 0.8; }
+        
+        /* ዋና አኮርዲዮን (1ኛ ደረጃ) */
         .accordion { margin: 20px 0; }
         .accordion-item { background: #fff; border-radius: 16px; margin-bottom: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); overflow: hidden; }
         .accordion-header { padding: 16px 18px; font-weight: 600; display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: 0.2s; border-bottom: 1px solid #f0ebe4; background: #fdfcfa; }
@@ -45,6 +47,24 @@
         .accordion-content .media-row { display: flex; gap: 20px; margin-top: 12px; flex-wrap: wrap; }
         .media-row a { text-decoration: none; color: var(--primary); font-size: 0.9rem; display: flex; align-items: center; gap: 6px; background: #efe9e1; padding: 6px 16px 6px 12px; border-radius: 30px; transition: 0.2s; }
         .media-row a:hover { background: var(--gold); color: #fff; }
+        .accordion-header.active-header { background: #faf6ef; border-bottom: 2px solid var(--gold); }
+
+        /* ንዑስ አኮርዲዮን (2ኛ ደረጃ) */
+        .sub-accordion-item { border: 1px solid #e0e0e0; margin-bottom: 8px; border-radius: 8px; overflow: hidden; background: #fdfbf7; }
+        .sub-accordion-header { width: 100%; padding: 12px 15px; background: #efe8d6; border: none; text-align: left; font-weight: bold; font-size: 15px; color: #4a3b22; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
+        .sub-accordion-header::after { content: '▼'; font-size: 12px; transition: transform 0.3s; }
+        .sub-accordion-header.active::after { transform: rotate(180deg); }
+        .sub-accordion-content { display: none; padding: 10px 15px; background: #fff; border-top: 1px solid #eee; }
+        .sub-accordion-content.active { display: block; }
+
+        /* የትምህርት አኮርዲዮን (3ኛ ደረጃ) */
+        .lesson-item { margin-bottom: 5px; border: 1px solid #f0e6d2; border-radius: 5px; }
+        .lesson-header { width: 100%; padding: 8px 12px; background: #f8f4ec; border: none; text-align: left; font-size: 14px; color: #5a4a30; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
+        .lesson-header::after { content: '▶'; font-size: 12px; transition: transform 0.3s; }
+        .lesson-header.active::after { transform: rotate(90deg); }
+        .lesson-content { display: none; padding: 10px; background: #fffcf6; font-size: 14px; line-height: 1.6; color: #333; }
+        .lesson-content.active { display: block; }
+
         .social-footer { text-align: center; margin-top: 30px; border-top: 2px solid #e0d6cc; padding-top: 20px; }
         .social-footer .links { display: flex; flex-wrap: wrap; justify-content: center; gap: 16px; margin-top: 12px; }
         .social-footer .links a { color: var(--primary); text-decoration: none; font-weight: 500; font-size: 0.9rem; background: #ede7df; padding: 6px 18px; border-radius: 40px; transition: 0.2s; }
@@ -57,7 +77,9 @@
         .content-item { background: #fff; border-radius: 12px; padding: 12px 16px; margin-bottom: 8px; border-left: 4px solid #c9a84c; }
         .content-item h4 { color: #6a1b1b; }
         .content-item small { opacity: 0.6; }
-        .accordion-header.active-header { background: #faf6ef; border-bottom: 2px solid var(--gold); }
+        .shelf-form { display: flex; gap: 10px; margin: 12px 0; flex-wrap: wrap; }
+        .shelf-form input { flex: 1; padding: 8px; border: 1px solid #ddd; border-radius: 20px; }
+        .shelf-form button { background: var(--gold); border: none; padding: 8px 20px; border-radius: 20px; color: #fff; font-weight: bold; cursor: pointer; }
     </style>
 </head>
 <body>
@@ -72,108 +94,118 @@
     <div class="search-box"><input type="text" id="searchInput" placeholder="ፈልግ በርዕስ፣ በደራሲ..." /><button onclick="performSearch()">ፈልግ</button></div>
     <div class="ad-banner"><strong>💰 Google AdSense</strong><br /><span class="text-muted">(በዚህ ቦታ የማስታወቂያ ኮድ ይጫናል)</span></div>
     <div class="verse-card"><div class="label">✦ <span id="verseLabel">የዕለቱ መንፈሳዊ ቃል</span></div><div class="verse" id="dailyVerse">"ጸንታችሁ ቁሙ" – 2ኛ ተሰሎንቄ 2:15</div></div>
-    <div id="personalBookshelf" style="display:none; margin-bottom:20px;"><h3 style="color:#6a1b1b;">📚 የኔ መጻሕፍት</h3><div id="personalBookList"></div></div>
+    <div id="personalShelf" style="display:none;">
+        <h3 style="color:#6a1b1b;">📚 የኔ መጻሕፍት</h3>
+        <div class="shelf-form">
+            <input type="text" id="newShelfTitle" placeholder="ርዕስ">
+            <input type="text" id="newShelfCategory" placeholder="ምድብ">
+            <button onclick="addToShelf()">ጨምር</button>
+        </div>
+        <div id="shelfList"></div>
+    </div>
+    <div id="contentContainer"></div>
+
+    <!-- ================== የ9ቱ ዋና ዋና አርስቶች ኮድ ================== -->
     <div class="accordion" id="accordionRoot">
-        <div class="accordion-item"><div class="accordion-header" data-category="ስለ ቤተክርስቲያን" onclick="toggleAccordion(this)"><span><span class="icon">⛪</span> <span class="cat-title">ስለ ቤተክርስቲያን</span></span><span>▼</span></div><div class="accordion-content"><p>የኢትዮጵያ ኦርቶዶክስ ተዋሕዶ ቤተክርስቲያን ታሪክ፣ መሥራችነት፣ መዋቅር እና ሚና።</p><div class="media-row"><a href="#">📄 ታሪክ</a><a href="#">📥 መዋቅር</a><a href="#">📺 ቪዲዮ</a></div><div class="category-books"></div></div></div>
-        <div class="accordion-item"><div class="accordion-header" data-category="እምነትና ትምህርት" onclick="toggleAccordion(this)"><span><span class="icon">📖</span> <span class="cat-title">እምነትና ትምህርት</span></span><span>▼</span></div><div class="accordion-content"><p>የተዋህዶ እምነት መሠረቶች፣ ሥላሴ፣ ተዋህዶ፣ የአባቶች ትምህርቶች።</p><div class="media-row"><a href="#">📄 ሥላሴ</a><a href="#">📥 ተዋህዶ</a><a href="#">🎧 ኦዲዮ</a></div><div class="category-books"></div></div></div>
-        <div class="accordion-item"><div class="accordion-header" data-category="ሥርዓተ አምልኮ" onclick="toggleAccordion(this)"><span><span class="icon">🕯️</span> <span class="cat-title">ሥርዓተ አምልኮ</span></span><span>▼</span></div><div class="accordion-content"><p>ቅዳሴ፣ ጸሎቶች፣ የአምልኮ ሥርዓቶች፣ ጾምና በዓላት።</p><div class="media-row"><a href="#">📄 ቅዳሴ</a><a href="#">📥 ጸሎቶች</a><a href="#">📺 ቪዲዮ</a></div><div class="category-books"></div></div></div>
-        <div class="accordion-item"><div class="accordion-header" data-category="ጥበብና ባህል" onclick="toggleAccordion(this)"><span><span class="icon">🎨</span> <span class="cat-title">ጥበብና ባህል</span></span><span>▼</span></div><div class="accordion-content"><p>የቤተክርስቲያን ሥነ-ጥበብ፣ ሥዕሎች፣ መዝሙር፣ ዝማሬ፣ ባህላዊ ትውፊቶች።</p><div class="media-row"><a href="#">🎨 ሥዕል</a><a href="#">🎵 ዝማሬ</a><a href="#">🖼️ ምስሎች</a></div><div class="category-books"></div></div></div>
-        <div class="accordion-item"><div class="accordion-header" data-category="ልጆችና ቤተሰብ" onclick="toggleAccordion(this)"><span><span class="icon">🧒</span> <span class="cat-title">ልጆችና ቤተሰብ</span></span><span>▼</span></div><div class="accordion-content"><p>የመጽሐፍ ቅዱስ ታሪኮች፣ ማቅለሚያዎች፣ የቤተሰብ ጸሎቶች።</p><div class="media-row"><a href="#">📖 ታሪኮች</a><a href="#">🎨 ማቅለሚያ</a><a href="#">🕊️ ጸሎቶች</a></div><div class="category-books"></div></div></div>
-        <div class="accordion-item"><div class="accordion-header" data-category="ጥያቄና መልስ" onclick="toggleAccordion(this)"><span><span class="icon">❓</span> <span class="cat-title">ጥያቄና መልስ</span></span><span>▼</span></div><div class="accordion-content"><p>ሥነ-መለኮታዊ ጥያቄዎች፣ የማህበረሰብ ውይይቶች፣ የአገልጋዮች ምላሾች።</p><div class="media-row"><a href="#">💬 ውይይት</a><a href="#">📩 ጥያቄ</a></div><div class="category-books"></div></div></div>
-        <div class="accordion-item"><div class="accordion-header" data-category="ቅዱሳት መጻሕፍት" onclick="toggleAccordion(this)"><span><span class="icon">📜</span> <span class="cat-title">ቅዱሳት መጻሕፍት</span></span><span>▼</span></div><div class="accordion-content"><p>ኦሪት፣ ነቢያት፣ ወንጌል፣ ሐዋርያት፣ መዝሙረ ዳዊት።</p><div class="media-row"><a href="#">📄 ጽሑፍ</a><a href="#">📥 ፒዲኤፍ</a><a href="#">🎧 ኦዲዮ</a></div><div class="category-books"></div></div></div>
-        <div class="accordion-item"><div class="accordion-header" data-category="የአገልግሎት መጻሕፍት" onclick="toggleAccordion(this)"><span><span class="icon">📚</span> <span class="cat-title">የአገልግሎት መጻሕፍት</span></span><span>▼</span></div><div class="accordion-content"><p>የአምልኮ መጻሕፍት፣ 14ቱ አናፍራቴ፣ መጽሐፈ ሰዓታት፣ ዝማሬ።</p><div class="media-row"><a href="#">📄 ጽሑፍ</a><a href="#">📥 ፒዲኤፍ</a><a href="#">🎧 ኦዲዮ</a></div><div class="category-books"></div></div></div>
-        <div class="accordion-item"><div class="accordion-header" data-category="መልቲሚዲያ" onclick="toggleAccordion(this)"><span><span class="icon">🎬</span> <span class="cat-title">መልቲሚዲያ</span></span><span>▼</span></div><div class="accordion-content"><p>የዩቲዩብ ቪዲዮዎች፣ ፖድካስቶች፣ የቀጥታ ስርጭቶች።</p><div class="embed-container"><iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" allowfullscreen></iframe></div><div class="media-row"><a href="#">📺 ዩቲዩብ</a><a href="#">🎙️ ፖድካስት</a><a href="#">🖼️ ምስሎች</a></div><div class="category-books"></div></div></div>
-    </div>
-    <div class="social-footer">
-        <p>📢 የእኛን ማህበራዊ ሚዲያ ይከተሉ</p>
-        <div class="links"><a href="#">📺 YouTube</a><a href="#">📘 Facebook</a><a href="#">✈️ Telegram</a><a href="#">💬 WhatsApp</a><a href="#">🎵 TikTok</a></div>
-        <p style="margin-top: 16px; font-size: 0.75rem; opacity: 0.6;">© 2026 EOTC EDUTECH</p>
-    </div>
-</div>
-<script>
-    (function() {
-        const langSelect = document.getElementById('langSelect');
-        const saved = localStorage.getItem('eotc_lang') || 'am';
-        langSelect.value = saved;
-        updateLanguage(saved);
-        langSelect.addEventListener('change', e => {
-            localStorage.setItem('eotc_lang', e.target.value);
-            updateLanguage(e.target.value);
-        });
-        function updateLanguage(code) {
-            const t = {
-                am:{site:'ተዋሕዶ ቃል መንገድ',sub:'EOTC EDUTECH',desc:'የኢትዮጵያ ኦርቶዶክስ ተዋሕዶ ቤተክርስቲያን ትምህርታዊ መድረክ'},
-                en:{site:'Tewahedo Word Path',sub:'EOTC EDUTECH',desc:'Ethiopian Orthodox Tewahedo Church Educational Platform'},
-                om:{site:'Karoora Jecha Tewahedo',sub:'EOTC EDUTECH',desc:'Waltajji Barnoota Kan Mankabeta Othodoksii Tewahedo Itoophiyaa'},
-                gez:{site:'ተዋሕዶ ቃል መንገድ',sub:'EOTC EDUTECH',desc:'የኢትዮጵያ ኦርቶዶክስ ተዋሕዶ ቤተክርስቲያን ትምህርታዊ መድረክ'},
-                ti:{site:'መንገዲ ቃል ተዋሕዶ',sub:'EOTC EDUTECH',desc:'መድረኽ ትምህርቲ ቤተ ክርስትያን ተዋሕዶ ኦርቶዶክስ ኢትዮጵያ'}
-            }[code] || t['am'];
-            document.getElementById('siteTitle').textContent = t.site;
-            document.getElementById('siteSubtitle').textContent = t.sub;
-            document.getElementById('heroDesc').textContent = t.desc;
-        }
-        const token = localStorage.getItem('eotc_token');
-        const userNav = document.getElementById('userNav');
-        if (token) {
-            try {
-                const payload = JSON.parse(atob(token.split('.')[1]));
-                userNav.innerHTML = `<span>እንኳን ደህና መጡ፣ ${payload.username}!</span> <a href="#" onclick="localStorage.removeItem('eotc_token'); location.reload();">ውጣ</a> <a href="bookshelf.html">የኔ መደርደሪያ</a>`;
-                loadPersonalBooks(token);
-            } catch(e) {}
-        }
-        async function loadPersonalBooks(token) {
-            const res = await fetch('/api/mybooks', { headers: { 'Authorization': 'Bearer ' + token } });
-            const data = await res.json();
-            if (Array.isArray(data) && data.length > 0) {
-                document.getElementById('personalBookshelf').style.display = 'block';
-                document.getElementById('personalBookList').innerHTML = data.map(b => `<div class="content-item"><h4>${b.title}</h4><small>📂 ${b.category}</small></div>`).join('');
-            }
-        }
-        let allBooks = [];
-        async function fetchAllBooks() {
-            const container = document.getElementById('contentContainer');
-            try {
-                const res = await fetch('http://localhost:3000/api/contents');
-                allBooks = await res.json();
-                if (container) container.innerHTML = '';
-                const def = document.querySelector('.accordion-header[data-category="ቅዱሳት መጻሕፍት"]');
-                if (def) toggleAccordion(def, true);
-            } catch(e) {}
-        }
-        window.toggleAccordion = function(header, force=false) {
-            const content = header.nextElementSibling;
-            const isOpen = content.classList.contains('active');
-            document.querySelectorAll('.accordion-content').forEach(c => c.classList.remove('active'));
-            document.querySelectorAll('.accordion-header').forEach(h => h.classList.remove('active-header'));
-            if (!isOpen || force) {
-                content.classList.add('active');
-                header.classList.add('active-header');
-                const cat = header.dataset.category;
-                const box = content.querySelector('.category-books');
-                if (box && allBooks.length) {
-                    const filtered = allBooks.filter(b => b.category === cat);
-                    box.innerHTML = filtered.length
-                        ? '<div style="margin-top:12px;"><strong>📖 መጻሕፍት</strong></div>' + filtered.map(b => `<div class="content-item"><h4>${b.title}</h4><small>📂 ${b.category}</small></div>`).join('')
-                        : '<p style="opacity:0.6; margin-top:8px;">ምንም መጻሕፍት አልተገኙም።</p>';
-                }
-            }
-        };
-        window.performSearch = function() {
-            const q = document.getElementById('searchInput').value.trim().toLowerCase();
-            document.querySelectorAll('.accordion-item').forEach(item => {
-                const h = item.querySelector('.accordion-header');
-                const title = h.innerText.toLowerCase();
-                const c = item.querySelector('.accordion-content');
-                if (!q) { item.style.display=''; c.classList.remove('active'); h.classList.remove('active-header'); return; }
-                if (title.includes(q)) { item.style.display=''; toggleAccordion(h, true); }
-                else { item.style.display='none'; c.classList.remove('active'); h.classList.remove('active-header'); }
-            });
-        };
-        document.getElementById('searchInput').addEventListener('keypress', e => { if (e.key==='Enter') performSearch(); });
-        const verses = ['"ጸንታችሁ ቁሙ" – 2ኛ ተሰሎንቄ 2:15','"በመከራችሁ ታገሱ" – ሮሜ 12:12','"ለሚጠይቅህ ሁሉ ስጠው" – ሉቃስ 6:30','"እግዚአብሔር ፍቅር ነው" – 1ኛ ዮሐንስ 4:8'];
-        document.getElementById('dailyVerse').textContent = verses[new Date().getDate() % verses.length];
-        fetchAllBooks();
-    })();
-</script>
-</body>
-</html>
+        
+        <!-- 1. ⛪ ስለ ቤተክርስቲያን -->
+        <div class="accordion-item">
+            <div class="accordion-header" data-category="ስለ ቤተክርስቲያን" onclick="toggleAccordion(this)">
+                <span><span class="icon">⛪</span> <span class="cat-title">ስለ ቤተክርስቲያን</span></span><span>▼</span>
+            </div>
+            <div class="accordion-content">
+                <div class="sub-accordion-item">
+                    <button class="sub-accordion-header">ቀዳሚዎቹ 12ቱ ምዕራፎች</button>
+                    <div class="sub-accordion-content">
+                        <div class="lesson-item"><button class="lesson-header">የኦርቶዶክስ ተዋሕዶ ትርጉም እና ማንነት</button><div class="lesson-content"></div></div>
+                        <div class="lesson-item"><button class="lesson-header">የቤተክርስቲያን ፍቺ እና ማንነት</button><div class="lesson-content"></div></div>
+                        <div class="lesson-item"><button class="lesson-header">የቤተክርስቲያን መሠረት</button><div class="lesson-content"></div></div>
+                        <div class="lesson-item"><button class="lesson-header">የቤተክርስቲያን አራት ባሕርያት</button><div class="lesson-content"></div></div>
+                        <div class="lesson-item"><button class="lesson-header">የቤተክርስቲያን ታሪክ</button><div class="lesson-content"></div></div>
+                        <div class="lesson-item"><button class="lesson-header">የቤተክርስቲያን አባላት</button><div class="lesson-content"></div></div>
+                        <div class="lesson-item"><button class="lesson-header">የቤተክርስቲያን ተልዕኮ</button><div class="lesson-content"></div></div>
+                        <div class="lesson-item"><button class="lesson-header">የክህነት ማዕረጎች እና አስተዳደራዊ መዋቅር</button><div class="lesson-content"></div></div>
+                        <div class="lesson-item"><button class="lesson-header">ቤተ ክርስቲያን እና ዓለም አቀፍ ጉባኤያት</button><div class="lesson-content"></div></div>
+                        <div class="lesson-item"><button class="lesson-header">ሥርዓት ቤተ ክርስቲያን</button><div class="lesson-content"></div></div>
+                    </div>
+                </div>
+                <div class="sub-accordion-item">
+                    <button class="sub-accordion-header">ቤተ ክርስቲያን እና ዓለም አቀፍ ጉባኤያት</button>
+                    <div class="sub-accordion-content">
+                        <div class="lesson-item"><button class="lesson-header">የቤተክርስቲያን ትርጉም</button><div class="lesson-content"></div></div>
+                        <div class="lesson-item"><button class="lesson-header">እሷት ቤተክርስቲያን</button><div class="lesson-content"></div></div>
+                        <div class="lesson-item"><button class="lesson-header">የአማናዊት ቤተክርስቲያን ምስጢራዊ ስድምርዎች</button><div class="lesson-content"></div></div>
+                        <div class="lesson-item"><button class="lesson-header">ቤተክርስቲያን በዘመነ ሐዋርያት</button><div class="lesson-content"></div></div>
+                        <div class="lesson-item"><button class="lesson-header">ጉባኤ ኒቂያ</button><div class="lesson-content"></div></div>
+                        <div class="lesson-item"><button class="lesson-header">ጉባኤ ቁስጥንጥንያ</button><div class="lesson-content"></div></div>
+                        <div class="lesson-item"><button class="lesson-header">ጉባኤ ኤፌሶን</button><div class="lesson-content"></div></div>
+                        <div class="lesson-item"><button class="lesson-header">ጉባኤ ኬልቄዶንና የአባቶች ተጋድሎ</button><div class="lesson-content"></div></div>
+                        <div class="lesson-item"><button class="lesson-header">እውነተኛው የቤተ ክርስቲያን ድምፅ የትኛው ነው?</button><div class="lesson-content"></div></div>
+                    </div>
+                </div>
+                <div class="category-books"></div>
+            </div>
+        </div>
+
+        <!-- 2. 📖 እምነትና ትምህርት -->
+        <div class="accordion-item">
+            <div class="accordion-header" data-category="እምነትና ትምህርት" onclick="toggleAccordion(this)">
+                <span><span class="icon">📖</span> <span class="cat-title">እምነትና ትምህርት</span></span><span>▼</span>
+            </div>
+            <div class="accordion-content">
+                <div class="sub-accordion-item">
+                    <button class="sub-accordion-header">ትምህርተ ሃይማኖት</button>
+                    <div class="sub-accordion-content">
+                        <div class="lesson-item"><button class="lesson-header">የሃይማኖት ምንነትና አስፈላጊነት</button><div class="lesson-content"></div></div>
+                        <div class="lesson-item"><button class="lesson-header">እምነት እና ሃይማኖት</button><div class="lesson-content"></div></div>
+                        <div class="lesson-item"><button class="lesson-header">አንዲት እምነት/ሃይማኖት</button><div class="lesson-content"></div></div>
+                        <div class="lesson-item"><button class="lesson-header">ኦርቶዶክስ ተዋሕዶ</button><div class="lesson-content"></div></div>
+                        <div class="lesson-item"><button class="lesson-header">የእውቀት እምነትና የእውነት እምነት</button><div class="lesson-content"></div></div>
+                        <div class="lesson-item"><button class="lesson-header">ዶግማ እና ቀኖና</button><div class="lesson-content"></div></div>
+                        <div class="lesson-item"><button class="lesson-header">ቅዱስ ትውፊት</button><div class="lesson-content"></div></div>
+                    </div>
+                </div>
+                <div class="sub-accordion-item">
+                    <button class="sub-accordion-header">ነገረ መለኮት (ነገረ እግዚአብሔር)</button>
+                    <div class="sub-accordion-content">
+                        <div class="lesson-item"><button class="lesson-header">ሥላሴ እግዚአብሔር</button><div class="lesson-content"></div></div>
+                        <div class="lesson-item"><button class="lesson-header">ምሥጢረ እነት አምላክዌ</button><div class="lesson-content"></div></div>
+                        <div class="lesson-item"><button class="lesson-header">ባህርያት እግዚአብሔር</button><div class="lesson-content"></div></div>
+                        <div class="lesson-item"><button class="lesson-header">የእግዚአብሔር አንድነትና ሦስትነት</button><div class="lesson-content"></div></div>
+                        <div class="lesson-item"><button class="lesson-header">የመንፈስ ቅዱስ መለኮታዊ ክብር</button><div class="lesson-content"></div></div>
+                    </div>
+                </div>
+                <div class="sub-accordion-item">
+                    <button class="sub-accordion-header">ነገረ ክርስቶስ</button>
+                    <div class="sub-accordion-content">
+                        <div class="lesson-item"><button class="lesson-header">ነገረ ክርስቶስ መግቢያ</button><div class="lesson-content"></div></div>
+                        <div class="lesson-item"><button class="lesson-header">ነገረ ተዋሕዶ</button><div class="lesson-content"></div></div>
+                        <div class="lesson-item"><button class="lesson-header">አንድ ባህርይ</button><div class="lesson-content"></div></div>
+                        <div class="lesson-item"><button class="lesson-header">ኢየሱስ ክርስቶስ ማን ነው?</button><div class="lesson-content"></div></div>
+                        <div class="lesson-item"><button class="lesson-header">የክርስቶስ የማስታረቅ አገልግሎት</button><div class="lesson-content"></div></div>
+                        <div class="lesson-item"><button class="lesson-header">ወደ አምላኬና ወደ አምላካችሁ [ዮሐ 20:17]</button><div class="lesson-content"></div></div>
+                        <div class="lesson-item"><button class="lesson-header">ከእኔ አብ ይበልጣል [ዮሐ 14:27]</button><div class="lesson-content"></div></div>
+                        <div class="lesson-item"><button class="lesson-header">አምላኬ አምላኬ ለምን ተውከኝ? [ማቴ 27:46]</button><div class="lesson-content"></div></div>
+                        <div class="lesson-item"><button class="lesson-header">የኢየሱስ ክርስቶስ አምላክና አባት [ኤፌ 1:3]</button><div class="lesson-content"></div></div>
+                        <div class="lesson-item"><button class="lesson-header">በኔ በቀር ወደ አብ የሚመጣ የለም [ዮሐ 14:6]</button><div class="lesson-content"></div></div>
+                        <div class="lesson-item"><button class="lesson-header">ስለ እኛ የሚግልደው [ሮሜ 8:34]</button><div class="lesson-content"></div></div>
+                        <div class="lesson-item"><button class="lesson-header">ስለ እነርሱ ሊያማልድ [ዕብ 7:24]</button><div class="lesson-content"></div></div>
+                        <div class="lesson-item"><button class="lesson-header">ከአብ ዘንድ ጠበቃ አለን? ጸራቂለሁስ አለን! [1ኛ ዮሐ 2:1]</button><div class="lesson-content"></div></div>
+                        <div class="lesson-item"><button class="lesson-header">የአዲስ ኪዳን መካከለኛ [1ኛ ጢሞ 2:5]</button><div class="lesson-content"></div></div>
+                        <div class="lesson-item"><button class="lesson-header">የሉትና ምልጃን አቀረበ [ዕብ 5:7]</button><div class="lesson-content"></div></div>
+                        <div class="lesson-item"><button class="lesson-header">ስለ እኛ አሁን ይታይ ዘንድ [ዕብ 9:24]</button><div class="lesson-content"></div></div>
+                        <div class="lesson-item"><button class="lesson-header">ክርስቶስን እንደግል አዳኝ አድርገህ ተቀበለው?</button><div class="lesson-content"></div></div>
+                    </div>
+                </div>
+                <div class="sub-accordion-item">
+                    <button class="sub-accordion-header">ኦርቶዶክሳዊ የድኅነት ትምህርት</button>
+                    <div class="sub-accordion-content">
+                        <div class="lesson-item"><button class="lesson-header">የሰው ልጅ ውድቀትና የባሕርይ መታወክ</button><div class="lesson-content"></div></div>
+                        <div class="lesson-item"><button class="lesson-header">የድኅነት ትርጉምና አስፈላጊነት</button><div class="lesson-content"></div></div>
+                        <div class="lesson-item"><button class="lesson-header">የአምላክ ሰው መሆንና የዓለም ቤዛነት</button><div class="lesson-content"></div></div>
+                        <div class="lesson-item"><button class="lesson-header">የክርስቶስ ሕማም፣ ሞትና ትንሳኤ ለድኅነታችን</button><div class="lesson-content"></div></div>
+                        <div class="lesson-item"><button class="lesson-header">ከምን እና እንዴት ዳንን?</button><div class="lesson-content"></div></div>
+                        <div class="lesson-item"><button class="lesson-header">ሰው የዳነው እንዴት ነው?</button><div class="lesson-content"></div></div>
+                        <div class="lesson-item"><button class="lesson-header">ኦርቶዶክሳዊ የድኅነት ገጽታዎች</button><div class="lesson-content"></div></div>
+                        <div class="lesson-item"><button class="lesson-header">አምስቱ አዕማደ ምሥጢራትና ድኅነት</button><div class="lesson-content"></div></div>
+                        <div class="lesson-item"><button class="lesson-header">ጥምቀት፣ ልጅነትና
