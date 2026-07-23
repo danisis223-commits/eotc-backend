@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="am">
+<head><meta charset="UTF-8"><title>ይመዝገቡ</title></head>
+<body>
+<h2>የተጠቃሚ መመዝገቢያ</h2>
+<form id="regForm">
+  <input type="text" id="username" placeholder="የተጠቃሚ ስም" required><br><br>
+  <input type="password" id="password" placeholder="የይለፍ ቃል" required><br><br>
+  <button type="submit">ይመዝገቡ</button>
+</form>
+<pre id="result"></pre>
+<script>
+document.getElementById('regForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const username = document.getElementById('username').value;
+  const password = document.getElementById('password').value;
+  const res = await fetch('/api/register', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({username, password})
+  });
+  const data = await res.json();
+  document.getElementById('result').textContent = JSON.stringify(data, null, 2);
+});
+</script>
+</body>
+</html>

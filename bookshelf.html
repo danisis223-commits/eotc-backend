@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="am">
+<head><meta charset="UTF-8"><title>የግል መጻሕፍት</title></head>
+<body>
+<h2>የኔ መጽሐፍ መደርደሪያ</h2>
+
+<label>ቶከን (ከመግቢያ ያገኙትን) </label><br>
+<textarea id="tokenInput" rows="3" cols="50" placeholder="eyJhbGciOiJIUzI1NiIs..."></textarea><br>
+<button onclick="loadMyBooks()">የኔን መጻሕፍት አሳይ</button>
+<button onclick="addBook()" style="margin-left:10px;">አዲስ መጽሐፍ ጨምር</button>
+<hr>
+
+<h3>መጻሕፍት ዝርዝር</h3>
+<div id="bookList"></div>
+
+<div id="addForm" style="display:none; margin-top:20px;">
+  <input type="text" id="newTitle" placeholder="ርዕስ" required>
+  <input type="text" id="newCategory" placeholder="ምድብ" required>
+  <button onclick="submitBook()">ላክ</button>
+</div>
+
+<script>
+function getToken() { return document.getElementById('tokenInput').value.trim(); }
+
+async function loadMyBooks() {
+  const token = getToken();
+  if (!token) { alert('ቶከን አስገባ'); return; }
+  const res = await fetch('/api/mybooks', { headers: { 'Authorization': 'Bearer ' + token } });
+  const data = await res.json();
+  const list = document.getElementById('bookList');
+  if (data.length === 0) list.innerHTML = '<p>ምንም መጽሐፍ የለም።</p>';
+  else list.innerHTML = data.map(b => `<div><strong>${b.title}</strong> (${b.category})</div>`).join('');
+}
+
+function addBook() { document.getElementById('addForm').style.display = 'block'; }
+
+async function submitBook() {
+  const token = getToken();
+  if (!token) { alert('ቶከን አስገባ'); return; }
+  const title = document.getElementById('newTitle').value;
+  const category = document.getElementById('newCategory').value;
+  if (!title || !category) return alert('ርዕስና ምድብ ያስፈልጋሉ');
+  const res = await fetch('/api/mybooks', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+    body: JSON.stringify({ title, category })
+  });
+  const data = await res.json();
+  if (data.error) { alert(data.error); return; }
+  document.getElementById('newTitle').value = '';
+  document.getElementById('newCategory').value = '';
+  loadMyBooks();
+}
+</script>
+</body>
+</html>

@@ -133,7 +133,7 @@
         async function fetchAllBooks() {
             const container = document.getElementById('contentContainer');
             try {
-                const res = await fetch('https://eotc-backend-production.up.railway.app/api/contents');
+                const res = await fetch('http://localhost:3000/api/contents');
                 allBooks = await res.json();
                 if (container) container.innerHTML = '';
                 const def = document.querySelector('.accordion-header[data-category="ቅዱሳት መጻሕፍት"]');
