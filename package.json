@@ -1,1 +1,11 @@
-{"name":"eotc-backend","version":"1.0.0","main":"server.js","dependencies":{"bcryptjs":"^3.0.3","express":"^4.18.2","jsonwebtoken":"^9.0.3"}}
+{
+  "name": "eotc-backend",
+  "version": "1.0.0",
+  "main": "server.js",
+  "dependencies": {
+    "express": "^4.18.2",
+    "bcryptjs": "^2.4.3",
+    "jsonwebtoken": "^9.0.2",
+    "compression": "^1.7.4"
+  }
+}
